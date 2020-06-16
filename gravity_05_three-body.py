@@ -17,7 +17,7 @@ def step_by_gravity(obj1, obj2):
                 (obj2.center[1] - obj1.center[1]) / norm_of_normal]  # obj1 射向 obj2 的法線單位向量
     normal21 = [(obj1.center[0] - obj2.center[0]) / norm_of_normal,
                 (obj1.center[1] - obj2.center[1]) / norm_of_normal]  # obj2 射向 obj1 的法線單位向量
-    g_constant = 0.0000000002
+    g_constant = 0.0000000002  # 調整後重力常數
 
     r_square = norm_of_normal * norm_of_normal
     temp_v1_delta = g_constant * obj2.mass / r_square / 2
@@ -33,7 +33,8 @@ def step_by_gravity(obj1, obj2):
     obj2.step_y += temp_v2_step[1]
     obj2.step = norm([obj2.step_x, obj2.step_y])
 
-    if obj1.step_x != 0:  # 計算加速度作用後 obj1 的位移角度
+    # 計算加速度作用後 obj1 的位移角度
+    if obj1.step_x != 0:
         obj1.theta = ((np.arctan(obj1.step_y / obj1.step_x) if obj1.step_x > 0 else np.pi + np.arctan(
             obj1.step_y / obj1.step_x)) * 180 / np.pi) % 360  # 計算角度
     else:
@@ -55,36 +56,36 @@ class Ball:
 
     def __init__(self, canvas, width, height, sid, radius=5, theta=random.randint(0, 360), step=random.randint(2, 7),
                  color='blue', position=None):
-        self.canvas = canvas
-        self.width = width
-        self.height = height
-        self.radius = radius  # 小球徑大小
-        self.mass = (self.radius * 100) ** 4  # 小球質量
-        self.theta = theta  # 隨機產生小球移動的角度
-        self.step = step  # 隨機產生小球的步幅 預設 (2, 3)
+        self.canvas = canvas  # 畫布名稱
+        self.width = width  # 畫布寬度
+        self.height = height  # 畫布高度
+        self.radius = radius  # 球體徑大小
+        self.mass = (self.radius * 100) ** 4  # 球體質量
+        self.theta = theta  # 隨機產生球體移動的角度
+        self.step = step  # 隨機產生球體的步幅 預設 (2, 3)
         self.step_x = np.cos(self.theta / 180 * np.pi) * self.step  # x 的位移幅度
         self.step_y = np.sin(self.theta / 180 * np.pi) * self.step  # y 的位移幅度
         self.color = color
         self.tag = str(sid) + str(self.cid)  # 刪除 canvas 物件時需用到的標籤
         self.canvas_id = self.canvas.create_oval(0, 0, self.radius * 2, self.radius * 2, fill=self.color,
-                                                 outline=self.color, tag=self.tag)  # 產生小球物件
+                                                 outline=self.color, tag=self.tag)  # 產生球體物件
         if position:
             self.canvas.move(self.canvas_id, position[0], position[1])  # 預設出生點位
-            self.position = self.canvas.coords(self.canvas_id)  # 呼叫小球的位置
+            self.position = self.canvas.coords(self.canvas_id)  # 呼叫球體的位置
         else:
             self.canvas.move(self.canvas_id, random.randint(840, self.width - 40 - self.radius),
                              random.randint(40, self.height - 40 - self.radius))  # 隨機安排出生點位
-            self.position = self.canvas.coords(self.canvas_id)  # 呼叫小球的位置
+            self.position = self.canvas.coords(self.canvas_id)  # 呼叫球體的位置
         self.center = [(self.position[0] + self.position[2]) / 2, (self.position[1] + self.position[3]) / 2]  # 球心位置
 
     def moveAction(self):  # 移動之執行函數
         self.canvas.move(self.canvas_id, self.step_x, self.step_y)  # 固定的步幅和角度
-        self.position = self.canvas.coords(self.canvas_id)  # 呼叫小球的位置
-        self.center = [(self.position[0] + self.position[2]) / 2, (self.position[1] + self.position[3]) / 2]  # 更新小球的球心
+        self.position = self.canvas.coords(self.canvas_id)  # 呼叫球體的位置
+        self.center = [(self.position[0] + self.position[2]) / 2, (self.position[1] + self.position[3]) / 2]  # 更新球體的球心
 
 
 def main():
-    ball_n = 6  # 粒子總數
+    ball_n = 6  # 球體總數
     width = 1280  # 視窗寬度
     height = 768  # 視窗高度
     root = Tk()  # 根視窗
@@ -94,71 +95,71 @@ def main():
 
     canvas.create_line(20, 20, 1260, 20, 1260, 748, 20, 748, 20, 20, width=10, fill='black', tag='base')  # 四邊的框
 
-    ball = []  # 粒子物件串列初始化
+    ball = []  # 球體物件串列初始化
     rr1 = 250
     ss1 = 0.75
     mm1 = 6.8
-    for i in range(0, 1):  # 建構粒子物件迴圈
-        temp_radius = 10  # random.randint(10, 10)  # 粒子半徑
-        temp_position = [width / 2 + rr1, height / 2 + rr1 * np.tan(np.pi / 6)]  # 粒子出生位置
-        temp_step = ss1  # random.randint(2, 10)  # 粒子出生步幅
+    for i in range(0, 1):  # 建構球體物件迴圈  No 1
+        temp_radius = 10  # random.randint(10, 10)  # 球體半徑
+        temp_position = [width / 2 + rr1, height / 2 + rr1 * np.tan(np.pi / 6)]  # 球體出生位置
+        temp_step = ss1  # random.randint(2, 10)  # 球體出生步幅
         ball.append(Ball(canvas, width=width, height=height, sid='ball', radius=temp_radius,
                          theta=random.randint(150, 150), step=temp_step, color='yellow',
                          position=[temp_position[0] - temp_radius, temp_position[1] - temp_radius,
-                                   temp_position[0], temp_position[1]]))  # 建構粒子物件
+                                   temp_position[0], temp_position[1]]))  # 建構球體物件
         ball[i].mass *= mm1
 
-    for i in range(1, 2):  # 建構粒子物件迴圈
-        temp_radius = 10  # random.randint(10, 10)  # 粒子半徑
-        temp_position = [width / 2 - rr1, height / 2 + rr1 * np.tan(np.pi / 6)]  # 粒子出生位置
-        temp_step = ss1  # random.randint(2, 10)  # 粒子出生步幅
+    for i in range(1, 2):  # 建構球體物件迴圈  No 2
+        temp_radius = 10  # random.randint(10, 10)  # 球體半徑
+        temp_position = [width / 2 - rr1, height / 2 + rr1 * np.tan(np.pi / 6)]  # 球體出生位置
+        temp_step = ss1  # random.randint(2, 10)  # 球體出生步幅
         ball.append(Ball(canvas, width=width, height=height, sid='ball', radius=temp_radius,
                          theta=random.randint(270, 270), step=temp_step, color='red',
                          position=[temp_position[0] - temp_radius, temp_position[1] - temp_radius,
-                                   temp_position[0], temp_position[1]]))  # 建構粒子物件
+                                   temp_position[0], temp_position[1]]))  # 建構球體物件
         ball[i].mass *= mm1
 
-    for i in range(2, 3):  # 建構粒子物件迴圈
-        temp_radius = 10  # random.randint(10, 10)  # 粒子半徑
-        temp_position = [width / 2, height / 2 - rr1 * 2 * np.tan(np.pi / 6)]  # 粒子出生位置
-        temp_step = ss1  # random.randint(2, 10)  # 粒子出生步幅
+    for i in range(2, 3):  # 建構球體物件迴圈  No 3
+        temp_radius = 10  # random.randint(10, 10)  # 球體半徑
+        temp_position = [width / 2, height / 2 - rr1 * 2 * np.tan(np.pi / 6)]  # 球體出生位置
+        temp_step = ss1  # random.randint(2, 10)  # 球體出生步幅
         ball.append(Ball(canvas, width=width, height=height, sid='ball', radius=temp_radius,
                          theta=random.randint(30, 30), step=temp_step, color='green',
                          position=[temp_position[0] - temp_radius, temp_position[1] - temp_radius,
-                                   temp_position[0], temp_position[1]]))  # 建構粒子物件
+                                   temp_position[0], temp_position[1]]))  # 建構球體物件
         ball[i].mass *= mm1
 
     rr2 = 38
     ss2 = 3.315
     mm2 = 0.12
-    for i in range(3, 4):  # 建構粒子物件迴圈
-        temp_radius = 3  # random.randint(10, 10)  # 粒子半徑
-        temp_position = [width / 2 + rr1 + rr2 * np.cos(120 / 180 * np.pi), height / 2 + rr1 * np.tan(np.pi / 6) + rr2 * np.sin(120 / 180 * np.pi)]  # 粒子出生位置
-        temp_step = ss2  # random.randint(2, 10)  # 粒子出生步幅
+    for i in range(3, 4):  # 建構球體物件迴圈  No 4
+        temp_radius = 3  # random.randint(10, 10)  # 球體半徑
+        temp_position = [width / 2 + rr1 + rr2 * np.cos(120 / 180 * np.pi), height / 2 + rr1 * np.tan(np.pi / 6) + rr2 * np.sin(120 / 180 * np.pi)]  # 球體出生位置
+        temp_step = ss2  # random.randint(2, 10)  # 球體出生步幅
         ball.append(Ball(canvas, width=width, height=height, sid='ball', radius=temp_radius,
                          theta=random.randint(210, 210), step=temp_step, color='yellow',
                          position=[temp_position[0] - temp_radius, temp_position[1] - temp_radius,
-                                   temp_position[0], temp_position[1]]))  # 建構粒子物件
+                                   temp_position[0], temp_position[1]]))  # 建構球體物件
         ball[i].mass *= mm2
 
-    for i in range(4, 5):  # 建構粒子物件迴圈
-        temp_radius = 3  # random.randint(10, 10)  # 粒子半徑
-        temp_position = [width / 2 - rr1 + rr2 * np.cos(240 / 180 * np.pi), height / 2 + rr1 * np.tan(np.pi / 6) + rr2 * np.sin(240 / 180 * np.pi)]  # 粒子出生位置
-        temp_step = ss2  # random.randint(2, 10)  # 粒子出生步幅
+    for i in range(4, 5):  # 建構球體物件迴圈  No 5
+        temp_radius = 3  # random.randint(10, 10)  # 球體半徑
+        temp_position = [width / 2 - rr1 + rr2 * np.cos(240 / 180 * np.pi), height / 2 + rr1 * np.tan(np.pi / 6) + rr2 * np.sin(240 / 180 * np.pi)]  # 球體出生位置
+        temp_step = ss2  # random.randint(2, 10)  # 球體出生步幅
         ball.append(Ball(canvas, width=width, height=height, sid='ball', radius=temp_radius,
                          theta=random.randint(330, 330), step=temp_step, color='red',
                          position=[temp_position[0] - temp_radius, temp_position[1] - temp_radius,
-                                   temp_position[0], temp_position[1]]))  # 建構粒子物件
+                                   temp_position[0], temp_position[1]]))  # 建構球體物件
         ball[i].mass *= mm2
 
-    for i in range(5, 6):  # 建構粒子物件迴圈
-        temp_radius = 3  # random.randint(10, 10)  # 粒子半徑
-        temp_position = [width / 2 + rr2, height / 2 - rr1 * 2 * np.tan(np.pi / 6)]  # 粒子出生位置
-        temp_step = ss2  # random.randint(2, 10)  # 粒子出生步幅
+    for i in range(5, 6):  # 建構球體物件迴圈  No 6
+        temp_radius = 3  # random.randint(10, 10)  # 球體半徑
+        temp_position = [width / 2 + rr2, height / 2 - rr1 * 2 * np.tan(np.pi / 6)]  # 球體出生位置
+        temp_step = ss2  # random.randint(2, 10)  # 球體出生步幅
         ball.append(Ball(canvas, width=width, height=height, sid='ball', radius=temp_radius,
                          theta=random.randint(90, 90), step=temp_step, color='green',
                          position=[temp_position[0] - temp_radius, temp_position[1] - temp_radius,
-                                   temp_position[0], temp_position[1]]))  # 建構粒子物件
+                                   temp_position[0], temp_position[1]]))  # 建構球體物件
         ball[i].mass *= mm2
 
     root.update()  # 初始視窗展現
@@ -172,7 +173,7 @@ def main():
     # 開始主迴圈
     while True:
         run += 1
-        for i in range(ball_n):  # 遍例所有的球
+        for i in range(ball_n):  # 遍例所有的球體
             ball[i].moveAction()  # 執行位移函數
 
         # 執行重力函數
